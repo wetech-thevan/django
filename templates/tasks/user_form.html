@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<h2 class="mb-4">{{ title }}</h2>
+<a href="{% url 'account_manage' %}" class="btn btn-secondary mb-3">
+  ← Quay lại Quản lý tài khoản
+</a>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <form method="post">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="mb-3">
+        <label for="{{ field.id_for_label }}" class="form-label">
+          {% if field.label == 'Username' %}Tên đăng nhập
+          {% elif field.label == 'Email address' %}Email
+          {% elif field.label == 'First name' %}Tên
+          {% elif field.label == 'Last name' %}Họ
+          {% elif field.label == 'Is active' %}Kích hoạt tài khoản?
+          {% else %}{{ field.label }}
+          {% endif %}
+        </label>
+
+        {% if field.widget_type == 'checkbox' %}
+        <div class="form-check">
+          {{ field }}
+          <label class="form-check-label" for="{{ field.id_for_label }}">
+            {{ field.help_text|default:'' }}
+          </label>
+        </div>
+        {% else %}
+        {{ field }}
+        {% endif %}
+        {% for error in field.errors %}
+        <div class="text-danger small">{{ error }}</div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+      {% if form.non_field_errors %}
+      <div class="alert alert-danger">
+        {% for error in form.non_field_errors %}
+        <p class="mb-0">{{ error }}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="d-grid gap-2 mt-4">
+        <button type="submit" class="btn btn-primary">
+          {% if object %}Lưu thay đổi{% else %}Tạo người dùng{% endif %}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

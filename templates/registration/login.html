@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Đăng nhập Hệ thống{% endblock %}
+{% block content %}
+<div class="row justify-content-center mt-5">
+  <div class="col-md-5">
+    <div class="card shadow-lg">
+      <div class="card-header bg-primary text-white text-center">
+        <h3 class="mb-0">ĐĂNG NHẬP HỆ THỐNG</h3>
+      </div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+
+          <div class="mb-3">
+            <label for="id_username" class="form-label">Tên đăng nhập</label>
+            <input type="text" name="username" id="id_username" class="form-control" placeholder="Tên đăng nhập" value="{{ form.username.value|default_if_none:'' }}">
+            {% for error in form.username.errors %}
+            <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="mb-3">
+            <label for="id_password" class="form-label">Mật khẩu</label>
+            <input type="password" name="password" id="id_password" class="form-control" placeholder="Mật khẩu">
+            {% for error in form.password.errors %}
+            <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+          </div>
+          {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {% for error in form.non_field_errors %}
+            <p class="mb-0">Tên đăng nhập hoặc Mật khẩu không đúng.</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          <div class="d-grid gap-2 mt-4">
+            <button type="submit" class="btn btn-success">Đăng nhập</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
