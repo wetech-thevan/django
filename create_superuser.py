@@ -7,13 +7,23 @@ django.setup()
 
 from django.contrib.auth.models import User
 
-# Tạo superuser nếu chưa tồn tại
-if not User.objects.filter(username='admin').exists():
-    User.objects.create_superuser(
-        username='admin',
-        email='admin@example.com',
-        password='E3b1d13n'
-    )
-    print("✓ Superuser 'admin' được tạo thành công với password 'E3b1d13n'")
+username = 'admin'
+password = 'E3b1d13n'
+email = 'admin@example.com'
+
+# Tạo hoặc cập nhật superuser
+if User.objects.filter(username=username).exists():
+    # Nếu tồn tại, cập nhật password
+    user = User.objects.get(username=username)
+    user.set_password(password)
+    user.save()
+    print(f"✓ Superuser '{username}' password được cập nhật thành công")
 else:
-    print("✓ Superuser 'admin' đã tồn tại")
+    # Nếu chưa tồn tại, tạo mới
+    User.objects.create_superuser(
+        username=username,
+        email=email,
+        password=password
+    )
+    print(f"✓ Superuser '{username}' được tạo thành công")
+
