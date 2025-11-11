@@ -27,28 +27,22 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-rc^*w^w&6g9_(uvx#6s*b
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
-
-# Thêm Railway domain nếu có
-if os.environ.get('RAILWAY_PUBLIC_DOMAIN'):
-    railway_domain = os.environ.get('RAILWAY_PUBLIC_DOMAIN')
-    if railway_domain not in ALLOWED_HOSTS:
-        ALLOWED_HOSTS.append(railway_domain)
+ALLOWED_HOSTS = ['*']  # Railway auto-assigns domain, nên dùng wildcard
 
 # FORM SUBMISSION
 # Cấu hình CSRF cho production
-CSRF_TRUSTED_ORIGINS = os.environ.get(
-    'CSRF_TRUSTED_ORIGINS',
-    'http://localhost:8000,http://127.0.0.1:8000'
-).split(',')
-
-# Thêm Railway URL nếu đang chạy trên production
-if not DEBUG and os.environ.get('RAILWAY_PUBLIC_DOMAIN'):
-    railway_domain = os.environ.get('RAILWAY_PUBLIC_DOMAIN')
-    CSRF_TRUSTED_ORIGINS.extend([
-        f'https://{railway_domain}',
-        f'http://{railway_domain}'
-    ])
+if DEBUG:
+    # Development: localhost
+    CSRF_TRUSTED_ORIGINS = [
+        'http://localhost:8000',
+        'http://127.0.0.1:8000',
+    ]
+else:
+    # Production: allow all (Railway sẽ validate qua Host header)
+    CSRF_TRUSTED_ORIGINS = [
+        'https://*.railway.app',
+        'https://*.up.railway.app',
+    ]
 
 # Application definition
 
