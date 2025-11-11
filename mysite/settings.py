@@ -28,12 +28,27 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-rc^*w^w&6g9_(uvx#6s*b
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
-if not DEBUG:
-    ALLOWED_HOSTS = ['*']  # Nên set cụ thể trên Railway
+
+# Thêm Railway domain nếu có
+if os.environ.get('RAILWAY_PUBLIC_DOMAIN'):
+    railway_domain = os.environ.get('RAILWAY_PUBLIC_DOMAIN')
+    if railway_domain not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(railway_domain)
 
 # FORM SUBMISSION
-# Comment out the following line and place your railway URL, and your production URL in the array.
-# CSRF_TRUSTED_ORIGINS = ["*"]
+# Cấu hình CSRF cho production
+CSRF_TRUSTED_ORIGINS = os.environ.get(
+    'CSRF_TRUSTED_ORIGINS',
+    'http://localhost:8000,http://127.0.0.1:8000'
+).split(',')
+
+# Thêm Railway URL nếu đang chạy trên production
+if not DEBUG and os.environ.get('RAILWAY_PUBLIC_DOMAIN'):
+    railway_domain = os.environ.get('RAILWAY_PUBLIC_DOMAIN')
+    CSRF_TRUSTED_ORIGINS.extend([
+        f'https://{railway_domain}',
+        f'http://{railway_domain}'
+    ])
 
 # Application definition
 
